@@ -1,7 +1,8 @@
-import modal
-import subprocess
 import os
 import shlex
+import subprocess
+
+import modal
 
 gpu_type = os.environ.get("GPU_TYPE", "T4")
 modal_timeout = int(os.environ.get("MODAL_TIMEOUT", "7200"))
@@ -33,7 +34,7 @@ cuda_image = (
     timeout=modal_timeout,
 )
 def run_cargo_test():
-    """Run CUDA runtime and shared chat tests on a Modal GPU."""
+    """Run CUDA runtime and CUDA chat tests on a Modal GPU."""
     subprocess.run(["nvidia-smi"], check=True)
 
     # Detect GPU compute capability
@@ -53,9 +54,9 @@ def run_cargo_test():
         "-p",
         "luminal_cuda_lite",
         "-p",
-        "llm_chat",
+        "llm_chat_cuda",
         "--features",
-        "luminal_cuda_lite/device,llm_chat/cuda_lite",
+        "luminal_cuda_lite/device",
         "--verbose",
         "--",
         *test_args,
