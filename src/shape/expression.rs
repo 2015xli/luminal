@@ -1302,6 +1302,25 @@ mod tests {
     }
 
     #[test]
+    fn test_symbolic_factor_division() {
+        // `div-mul-var-self`: a product divided by one of its symbolic
+        // factors, in either operand order -- the split of a merged extent
+        let (h, w, c) = (expr('h'), expr('w'), expr('c'));
+        assert_eq!(((h * w) / w).simplify(), h);
+        assert_eq!(((w * h) / w).simplify(), h);
+        assert_eq!(((h * w * c) / c).simplify(), (h * w).simplify());
+        assert!(
+            (((h * w) / w) * w)
+                .simplify()
+                .egglog_equal((h * w).simplify())
+        );
+        // `div-mul-common-factor`: literal cofactors of a shared factor
+        assert_eq!(((w * 4) / (w * 2)).simplify(), expr(2));
+        // `div-mul-num-divisor`: a literal dividing the literal cofactor
+        assert!(((h * 4) / 2).simplify().egglog_equal((h * 2).simplify()));
+    }
+
+    #[test]
     fn test_const_remainder_div_mod_simplifications() {
         let z = expr('z');
 
